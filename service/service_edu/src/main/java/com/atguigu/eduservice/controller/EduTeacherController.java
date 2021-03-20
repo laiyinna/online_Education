@@ -5,11 +5,13 @@ import com.atguigu.commonutils.CommonResult;
 import com.atguigu.eduservice.entity.EduTeacher;
 import com.atguigu.eduservice.entity.vo.EduTeacherQuery;
 import com.atguigu.eduservice.service.EduTeacherService;
+import com.atguigu.servicebase.exceptionhandler.GuliException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -38,6 +40,11 @@ public class EduTeacherController {
     @GetMapping("findAll")
     public CommonResult findAll() {
         List<EduTeacher> list = eduTeacherService.list(null);
+        try {
+            int i = 10/0;
+        } catch (Exception e) {
+            throw new GuliException(20001,"自定义异常处理");
+        }
         return CommonResult.ok().data("item", list);
     }
 
@@ -89,6 +96,35 @@ public class EduTeacherController {
         List<EduTeacher> records = pageParam.getRecords();
         long total = pageParam.getTotal();
         return CommonResult.ok().data("total", total).data("rows", records);
+    }
+
+    @ApiOperation(value = "新增讲师")
+    @PostMapping("addTeacher")
+    public CommonResult addTeacher(@ApiParam(name = "teacher", value = "讲师对象", required = true) @RequestBody EduTeacher eduTeacher) {
+        boolean save = eduTeacherService.save(eduTeacher);
+        if(save) {
+            return CommonResult.ok();
+        }else {
+            return CommonResult.error();
+        }
+    }
+
+    @ApiOperation(value = "根据id查询讲师")
+    @GetMapping("getTeacher/{id}")
+    public CommonResult getTeacher(@PathVariable String id) {
+        EduTeacher eduTeacher = eduTeacherService.getById(id);
+        return CommonResult.ok().data("teacher",eduTeacher);
+    }
+
+    @ApiOperation(value = "讲师修改")
+    @PostMapping("updateTeacher")
+    public CommonResult updateTeacher(@ApiParam(name = "teacher", value = "讲师对象", required = true) @RequestBody EduTeacher eduTeacher) {
+        boolean result = eduTeacherService.updateById(eduTeacher);
+        if(result) {
+            return CommonResult.ok();
+        }else {
+            return CommonResult.error();
+        }
     }
 }
 
