@@ -66,18 +66,21 @@ public class EduTeacherController {
         return CommonResult.ok().data("total", total).data("rows", records);
     }
 
-    @ApiOperation(value = "条件分页讲师列表")
-    @PostMapping("pageTeacherCondition")
-    public CommonResult pageListCondition(@RequestBody EduTeacherQuery eduTeacherQuery){
-        Page<EduTeacher> pageParam = new Page<EduTeacher>(eduTeacherQuery.getCurrent(),eduTeacherQuery.getLimit());
-        //构建条件QueryWrapper
+    //4 条件查询带分页的方法
+    @PostMapping("pageTeacherCondition/{current}/{limit}")
+    public CommonResult pageTeacherCondition(@PathVariable long current,@PathVariable long limit,
+                                  @RequestBody(required = false)  EduTeacherQuery teacherQuery) {
+        //创建page对象
+        Page<EduTeacher> pageTeacher = new Page<>(current,limit);
+
+        //构建条件
         QueryWrapper<EduTeacher> wrapper = new QueryWrapper<>();
         // 多条件组合查询
         // mybatis学过 动态sql
-        String name = eduTeacherQuery.getName();
-        Integer level = eduTeacherQuery.getLevel();
-        String begin = eduTeacherQuery.getBegin();
-        String end = eduTeacherQuery.getEnd();
+        String name = teacherQuery.getName();
+        Integer level = teacherQuery.getLevel();
+        String begin = teacherQuery.getBegin();
+        String end = teacherQuery.getEnd();
         //判断条件值是否为空，如果不为空拼接条件
         if(!StringUtils.isEmpty(name)) {
             //构建条件
@@ -92,10 +95,16 @@ public class EduTeacherController {
         if(!StringUtils.isEmpty(end)) {
             wrapper.le("gmt_create",end);
         }
-        eduTeacherService.page(pageParam,wrapper);
-        List<EduTeacher> records = pageParam.getRecords();
-        long total = pageParam.getTotal();
-        return CommonResult.ok().data("total", total).data("rows", records);
+
+        //排序
+        wrapper.orderByDesc("gmt_create");
+
+        //调用方法实现条件查询分页
+        eduTeacherService.page(pageTeacher,wrapper);
+
+        long total = pageTeacher.getTotal();//总记录数
+        List<EduTeacher> records = pageTeacher.getRecords(); //数据list集合
+        return CommonResult.ok().data("total",total).data("rows",records);
     }
 
     @ApiOperation(value = "新增讲师")
