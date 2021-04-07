@@ -1,8 +1,10 @@
 package com.atguigu.eduservice.service.impl;
 
+import com.atguigu.eduservice.entity.EduChapter;
 import com.atguigu.eduservice.entity.EduCourse;
 import com.atguigu.eduservice.entity.EduCourseDescription;
 import com.atguigu.eduservice.entity.vo.CourseInfoVo;
+import com.atguigu.eduservice.entity.vo.CoursePublishVo;
 import com.atguigu.eduservice.mapper.EduCourseMapper;
 import com.atguigu.eduservice.service.EduCourseDescriptionService;
 import com.atguigu.eduservice.service.EduCourseService;
@@ -41,5 +43,38 @@ public class EduCourseServiceImpl extends ServiceImpl<EduCourseMapper, EduCourse
         eduCourseDescription.setId(eduCourse.getId());
         eduCourseDescriptionService.save(eduCourseDescription);
         return eduCourse.getId();
+    }
+
+    @Override
+    public CourseInfoVo getCourseInfoById(String courseId) {
+        EduCourse eduCourse = baseMapper.selectById(courseId);
+        EduCourseDescription courseDescription = eduCourseDescriptionService.getById(courseId);
+        CourseInfoVo courseInfoVo = new CourseInfoVo();
+        BeanUtils.copyProperties(eduCourse,courseInfoVo);
+        courseInfoVo.setDescription(courseDescription.getDescription());
+        return courseInfoVo;
+    }
+
+    @Override
+    public String updateCourseInfo(CourseInfoVo courseInfoVo) {
+        EduCourse eduCourse = new EduCourse();
+        BeanUtils.copyProperties(courseInfoVo,eduCourse);
+        int updateCourse = baseMapper.updateById(eduCourse);
+        if(updateCourse == 0) {
+            throw new GuliException(20001,"修改课程信息失败！");
+        }
+        EduCourseDescription eduCourseDescription = new EduCourseDescription();
+        eduCourseDescription.setId(courseInfoVo.getId());
+        eduCourseDescription.setDescription(courseInfoVo.getDescription());
+        boolean updateDescription = eduCourseDescriptionService.updateById(eduCourseDescription);
+        if(!updateDescription) {
+            throw new GuliException(20001,"修改课程简介失败！");
+        }
+        return eduCourse.getId();
+    }
+
+    @Override
+    public CoursePublishVo getInfoById(String id) {
+        return baseMapper.getInfoById(id);
     }
 }

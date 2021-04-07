@@ -2,4 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.atguigu.eduservice.mapper.EduCourseMapper">
 
+    <!--根据课程id查询课程信息-->
+    <select id="getInfoById" resultType="com.atguigu.eduservice.entity.vo.CoursePublishVo">
+        SELECT
+            t1.id,
+            t1.title as courseName,
+            t1.cover,
+            t1.price,
+            t1.lesson_num as lessonNum,
+            t2.description,
+            t3.name,
+            t4.title as oneTitle,
+            t5.title as twoTitle
+        FROM edu_course t1
+        LEFT JOIN edu_course_description t2 ON t2.id = t1.id
+        LEFT JOIN edu_teacher t3 ON t3.id = t1.teacher_id
+        LEFT JOIN edu_subject t4 ON t4.id = t1.subject_parent_id
+        LEFT JOIN edu_subject t5 ON t5.id = t1.subject_id
+        WHERE t1.id=#{id}
+    </select>
+
 </mapper>
