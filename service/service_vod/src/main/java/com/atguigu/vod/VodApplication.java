@@ -1,24 +1,17 @@
-package com.atguigu.eduservice;
+package com.atguigu.vod;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
-/**
- * @author SuSu
- * @version 1.0
- * @date 2021/3/16 19:58
- */
-@SpringBootApplication
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @EnableDiscoveryClient
-@EnableFeignClients
 @ComponentScan(basePackages = {"com.atguigu"})
-public class EduTeacherApplication {
+public class VodApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(EduTeacherApplication.class,args);
+        SpringApplication.run(VodApplication.class, args);
     }
-
 }

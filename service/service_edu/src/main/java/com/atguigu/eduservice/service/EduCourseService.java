@@ -50,4 +50,13 @@ public interface EduCourseService extends IService<EduCourse> {
      * @Param @param id
      */
     CoursePublishVo getInfoById(String id);
+
+    /**
+     * 删除课程信息
+     * @Return void
+     * @Author suyuanyuan
+     * @Date 11:22 2021/4/11
+     * @Param @param courseId
+     */
+    void removeCourse(String courseId);
 }
