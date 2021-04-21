@@ -2,6 +2,7 @@ package com.atguigu.eduservice.controller;
 
 
 import com.atguigu.commonutils.CommonResult;
+import com.atguigu.eduservice.annotation.EduSysLog;
 import com.atguigu.eduservice.entity.EduTeacher;
 import com.atguigu.eduservice.entity.vo.EduTeacherQuery;
 import com.atguigu.eduservice.service.EduTeacherService;
@@ -109,6 +110,7 @@ public class EduTeacherController {
 
     @ApiOperation(value = "新增讲师")
     @PostMapping("addTeacher")
+    @EduSysLog(operationType = "add", operationName = "新增讲师")
     public CommonResult addTeacher(@ApiParam(name = "teacher", value = "讲师对象", required = true) @RequestBody EduTeacher eduTeacher) {
         boolean save = eduTeacherService.save(eduTeacher);
         if(save) {
